@@ -1,0 +1,66 @@
+<%- include("partials/header") %>
+
+<body>
+    <div class="container mt-4 mb-3">
+        <h2 class="text-center"><%= blog ? "Edit Blog" : "Write a Blog" %></h2>
+
+        <form id="blogForm" action="<%= blog ? `/blog/${blog.id}?_method=PUT` : '/write' %>" method="POST" class="row g-3 blog-form">
+            <input type="hidden" name="_method" value="<%= blog ? 'PUT' : 'POST' %>">
+
+            <!-- Author -->
+            <div class="col-md-6">
+                <label for="author" class="form-label">Author</label>
+                <input type="text" id="author" name="author" class="form-control" required placeholder="Your Name" value="<%= blog ? blog.author : '' %>">
+            </div>
+
+            <!-- Topic -->
+            <div class="col-md-6">
+                <label for="topic" class="form-label">Topic</label>
+                <input type="text" id="topic" name="topic" class="form-control" required placeholder="Blog Topic" value="<%= blog ? blog.title : '' %>">
+            </div>
+
+            <!-- Blog Content -->
+            <div class="col-12">
+                <label for="content" class="form-label">Your Blog</label>
+                <textarea id="content" name="content" class="form-control textarea-field" rows="10" maxlength="4000" required placeholder="Write your blog here..."><%= blog ? blog.content : '' %></textarea>
+                <p id="charCount" class="char-counter">0/4000</p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-12 d-flex justify-content-between">
+                <button type="reset" class="btn btn-danger reset-btn">Reset</button>
+                <button type="button" onclick="confirmSubmit()" class="btn btn-primary submit-btn"><%= blog ? "Update" : "Publish" %></button>
+            </div>
+        </form>
+    </div>
+</body>
+
+<script>
+    const textarea = document.getElementById("content");
+    const charCount = document.getElementById("charCount");
+    const blogForm = document.getElementById("blogForm");
+    const topicInput = document.getElementById("topic");
+
+    textarea.addEventListener("input", () => {
+        if (textarea.value.length > 4000) {
+            textarea.value = textarea.value.substring(0, 4000);
+        }
+        charCount.textContent = `${textarea.value.length}/4000`;
+    });
+
+    // Set initial character count when editing
+    charCount.textContent = `${textarea.value.length}/4000`;
+
+    function confirmSubmit() {
+        const isEditing = blogForm.action.includes('_method=PUT');
+        const message = isEditing 
+            ? `Are you sure you want to save the edits to "${topicInput.value}"?`
+            : `Are you sure you want to publish "${topicInput.value}"?`;
+
+        if (confirm(message)) {
+            blogForm.submit();
+        }
+    }
+</script>
+
+<%- include("partials/footer") %>

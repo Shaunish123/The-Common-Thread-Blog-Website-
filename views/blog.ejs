@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= blog.title %></title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="blog-page-body">
+
+    <%- include("partials/header") %>
+
+    <main class="blog-page-container">
+        <h1 class="blog-page-title"><%= blog.title %></h1>
+        <p class="blog-page-author">By: <%= blog.author %></p>
+        
+        <div class="blog-page-content">
+            <% let paragraphs = blog.content.split("\n"); %>
+            <% paragraphs.forEach(para => { %>
+                <p class="blog-page-text"><%= para %></p>
+            <% }) %>
+        </div>
+
+        <div class="blog-page-buttons">
+            <% if (blog.id > 3) { %>
+                <a href="/blog/<%= blog.id %>/edit" class="edit-btn">Edit Blog</a>
+                <form id="deleteForm" action="/blog/<%= blog.id %>?_method=DELETE" method="POST" style="width: 100%; display: flex; justify-content: center;">
+                    <button type="button" class="delete-btn" onclick="confirmDelete('<%= blog.title %>')">Delete Blog</button>
+                </form>
+            <% } %>
+            <a href="/" class="blog-page-back-btn">← Back to Home</a>
+        </div>
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <script>
+        function confirmDelete(blogTitle) {
+            if (confirm(`Are you sure you want to delete "${blogTitle}"?`)) {
+                document.getElementById('deleteForm').submit();
+            }
+        }
+
+        // Check for URL parameters indicating an action was performed
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+        const title = urlParams.get('title');
+
+        if (action === 'edited' && title) {
+            alert(`Blog "${title}" has been successfully edited!`);
+        }
+    </script>
+
+</body>
+</html>

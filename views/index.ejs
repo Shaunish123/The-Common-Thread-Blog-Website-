@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Common Thread</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+    <%- include("partials/header") %>
+
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>The Common Thread</h1>
+            <p>Weaving Stories, Sharing Insights</p>
+            <a href="/write" class="btn">Write a Blog</a>
+        </section>
+
+        <!-- Blog Section -->
+        <section class="blog-section">
+            <h2>Recent Blogs</h2>
+
+            <div class="blog-container">
+                <% for (let i = 0; i < blogs.length; i++) { %>
+                    <a href="/blog/<%= blogs[i].id %>" class="blog-card">
+                        <h3 class="blog-title"><%= blogs[i].title %></h3>
+                        <p class="blog-author">By: <%= blogs[i].author %></p>
+                        <p class="blog-content">
+                            <% let words = blogs[i].content.split(" "); %>
+                            <%= words.length > 100 ? words.slice(0, 100).join(" ") + "..." : blogs[i].content %>
+                        </p>
+                        <% if (words.length > 100) { %> 
+                            <span class="read-more">Read More</span> 
+                        <% } %>
+                    </a>
+                <% } %>
+            </div>
+        </section>
+
+    </main>
+
+    <%- include("partials/footer") %>
+
+    <script>
+        // Check for URL parameters indicating an action was performed
+        const urlParams = new URLSearchParams(window.location.search);
+        const action = urlParams.get('action');
+        const title = urlParams.get('title');
+
+        if (action === 'deleted' && title) {
+            alert(`Blog "${title}" has been successfully deleted!`);
+            // Clean up the URL
+            window.history.replaceState({}, document.title, '/');
+        }
+    </script>
+
+</body>
+</html>
